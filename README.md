@@ -9,6 +9,7 @@ let WebpackCssSprite = require('../webpack-css-sprite');
 
 new WebpackCssSprite({
     cssPath: projectInfo.output + '/css/',
+    spritePath: projectInfo.output + '/images/sprite/',
     spriteSheet: projectInfo.output + '/images/sprite/icon.png',
     pathToSpriteSheetFromCSS: '../images/sprite/icon.png',
     spritesmithOptions: {
@@ -21,5 +22,6 @@ new WebpackCssSprite({
 ```
 ## options
 * cssPath：string - 待处理css所在文件夹。    
+* spritePath：string - 打包后雪碧图所在文件夹路径。    
             
 其余配置项见[gulp-css-spriter-dookay](https://www.npmjs.com/package/gulp-css-spriter-dookay)。   

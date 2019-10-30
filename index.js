@@ -70,7 +70,11 @@ module.exports = class WebpackCssSprite {
                 chunkBackgroundImageDeclarations.forEach((declaration) => {
                     // Match each background image in the declaration (there could be multiple background images per value)
                     spriterUtil.matchBackgroundImages(declaration.value, function (imagePath) {
-                        imagePath = path.join(path.dirname(filePath), imagePath);
+                        if (self.options.spritePath) {
+                            imagePath = path.join(self.options.spritePath, imagePath.split('/').pop());
+                        } else {
+                            imagePath = path.join(path.dirname(filePath), imagePath);
+                        }
                         // If not already in the overall list of images collected
                         // Add to the queue/list of images to be verified
                         if (!imageMap[imagePath]) {
@@ -80,6 +84,7 @@ module.exports = class WebpackCssSprite {
                         imageMap[imagePath] = true;
                     });
                 });
+                
                 //检查路径是否存在
                 Object.keys(newImagesFromChunkMap).forEach((imagePath) => {
                     let imagePromise;
@@ -110,7 +115,6 @@ module.exports = class WebpackCssSprite {
                 //保持文件的引用
                 fileList.push({ content: file, path: filePath });
             }
-
             const results = yield Promise.all(imagePromiseArray);
             //存放存在且不重复的图片路径
             let imageList = [];
@@ -122,8 +126,7 @@ module.exports = class WebpackCssSprite {
             }
             const spritesmithOptions = extend({}, self.options.spritesmithOptions, { src: imageList });
             //打包后的雪碧图，包含coordinates、properties和image三个属性，分别表示雪碧图中小图的坐标、雪碧图的宽高、雪碧图图片数据
-            const spriteResult = yield promiseCall(spritesmith, spritesmithOptions);
-
+            const spriteResult = yield promiseCall(spritesmith.run, spritesmithOptions);
             let count = 0;
             for (let i in spriteResult.coordinates) {
                 count++;
@@ -134,7 +137,7 @@ module.exports = class WebpackCssSprite {
             }
             for (let i = 0; i < fileList.length; i++) {
                 let file = fileList[i];//content path
-                file = transformFileWithSpriteSheetData(file, spriteResult.coordinates, self.options.pathToSpriteSheetFromCSS, self.options.includeMode, self.options.silent, self.options.outputIndent, self.options.matchReg);
+                file = transformFileWithSpriteSheetData(self.options.spritePath, file, spriteResult.coordinates, self.options.pathToSpriteSheetFromCSS, self.options.includeMode, self.options.silent, self.options.outputIndent, self.options.matchReg);
                 //写入css
                 yield promiseCall(fs.writeFile, file.path, file.content, 'utf-8');
             }
