@@ -25,7 +25,7 @@ function transformFileWithSpriteSheetData(spritePath, file, coordinateMap, pathT
             declaration.value = spriterUtil.matchBackgroundImages(declaration.value, function (imagePath) {
                 let fullImagePath;
                 if (spritePath) {
-                    fullImagePath = path.join(spritePath, imagePath.split(path.resolve('/')).pop());
+                    fullImagePath = path.join(spritePath, imagePath.split('/').pop());
                 } else {
                     fullImagePath = path.join(path.dirname(filePath), imagePath);
                 }
