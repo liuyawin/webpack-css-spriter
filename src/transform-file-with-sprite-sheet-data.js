@@ -23,12 +23,13 @@ function transformFileWithSpriteSheetData(spritePath, file, coordinateMap, pathT
         styles = mapOverStylesAndTransformBackgroundImageDeclarations(styles, includeMode, matchReg, function (declaration) {
             let coordList = [];
             declaration.value = spriterUtil.matchBackgroundImages(declaration.value, function (imagePath) {
+                let fullImagePath;
                 if (spritePath) {
-                    imagePath = path.join(spritePath, imagePath.split('/').pop());
+                    fullImagePath = path.join(spritePath, imagePath.split(path.resolve('/')).pop());
                 } else {
-                    imagePath = path.join(path.dirname(filePath), imagePath);
+                    fullImagePath = path.join(path.dirname(filePath), imagePath);
                 }
-                let coords = coordinateMap[imagePath];
+                let coords = coordinateMap[fullImagePath];
 
                 // Make sure there are coords for this image in the sprite sheet, otherwise we won't include it
                 if (coords) {
