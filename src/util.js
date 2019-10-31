@@ -10,7 +10,7 @@ function readFile(path) {
             let fPath = join(path, item);
             let stat = fs.statSync(fPath);
             if (stat.isDirectory()) {
-                read(fPath, cb)
+                // read(fPath, cb)
             } else {
                 totalFiles.push(fPath);
             }
